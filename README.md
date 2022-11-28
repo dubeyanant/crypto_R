@@ -1,4 +1,4 @@
 # Crypto Analysis Project
 
-by **Anant Dubey **and **Paresh Mahajan**.
+by **Anant Dubey** and **Paresh Mahajan**.
 
