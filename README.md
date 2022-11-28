@@ -1,2 +1,4 @@
-This is Readme file
+# Crypto Analysis Project
+
+by **Anant Dubey **and **Paresh Mahajan**.
 
