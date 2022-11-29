@@ -14,3 +14,4 @@ df <- data.frame(lapply(df, function(x)str_trim(x)))
 df
 
 df[3495,] # printing last row of the data frame
+
