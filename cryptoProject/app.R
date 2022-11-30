@@ -8,7 +8,7 @@ ui <- fluidPage(
   sidebarLayout(
     sidebarPanel(
       #Dropdown menu for selecting cryptocurrency
-      selectInput("select_crypto", "Select Cryptocurrency", choices = c("Bitcoin", "Ethereum", "Doge Coin")),
+      selectInput("select_crypto", "Select Cryptocurrency", choices = c("Bitcoin", "Ethereum", "Doge_Coin")),
       # Displaying x and y co-ordinates
       verbatimTextOutput("info"),
       
@@ -41,19 +41,27 @@ server <- function(input, output) {
   
   # Create scatter-plot
   output$lineplot <- renderPlot({
+    
     if(input$select_crypto == "Bitcoin"){
-      color = "#434343"
-      par(mar = c(4, 4, 1, 1))
-      plot(x = Bitcoin$Date, y = Bitcoin$Close, type = "l", xlab = "Date", ylab = "Closing Price in $",
-           col = color, fg = color, col.lab = color, col.axis = color)
-      
-      # Display only if smoother is checked
-      if(input$smoother){
-        smooth_curve <- lowess(x = as.numeric(Bitcoin$Date), y = Bitcoin$Close, f = input$f)
-        lines(smooth_curve, col = "#E6553A", lwd = 3)
-      }
+      selectedInput <- Bitcoin
     }
-  })
+    else if(input$select_crypto == "Ethereum"){
+      selectedInput <- Ethereum
+    }
+    else if(input$select_crypto == "Doge_Coin"){
+      input$select_crypto == Doge_Coin
+    }
+    color = "#434343"
+    par(mar = c(4, 4, 1, 1))
+    plot(x = selectedInput$Date, y = selectedInput$Close, type = "l", xlab = "Date", ylab = "Closing Price in $",
+         col = color, fg = color, col.lab = color, col.axis = color)
+    
+    # Display only if smoother is checked
+    if(input$smoother){
+      smooth_curve <- lowess(x = as.numeric(selectedInput$Date), y = selectedInput$Close, f = input$f)
+      lines(smooth_curve, col = "#E6553A", lwd = 3)
+    }
+    })
   
   # Display x co-ordinate and price
   output$info <- renderText({
