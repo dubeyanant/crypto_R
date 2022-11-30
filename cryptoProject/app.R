@@ -2,11 +2,13 @@ library(shiny)
 
 ui <- fluidPage(
   navbarPage("Crypto Data",
-             tabPanel("Single",
-                      titlePanel("Cryptocurrency"),
+             tabPanel("Single",titlePanel("Cryptocurrency"),
+  titlePanel("Cryptocurrency"),
   
   sidebarLayout(
     sidebarPanel(
+      #Dropdown menu for selecting cryptocurrency
+      selectInput("select_crypto", "Select Cryptocurrency", choices = c("Bitcoin", "Ethereum", "Doge Coin")),
       # Displaying x and y co-ordinates
       verbatimTextOutput("info"),
       
@@ -21,11 +23,11 @@ ui <- fluidPage(
                        HTML("Higher values give more smoothness.")
       )
     ),
-          mainPanel(
-            # Displaying plot graph
-            plotOutput("lineplot", click = "plot_click")
-          )
-        )
+    mainPanel(
+      # Displaying plot graph
+      plotOutput("lineplot", click = "plot_click")
+    )
+  )
              ),
   tabPanel("Compare")
   )
@@ -39,15 +41,17 @@ server <- function(input, output) {
   
   # Create scatter-plot
   output$lineplot <- renderPlot({
-    color = "#434343"
-    par(mar = c(4, 4, 1, 1))
-    plot(x = df$Date, y = df$Close, type = "l", xlab = "Date", ylab = "Closing Price in $",
-         col = color, fg = color, col.lab = color, col.axis = color)
-    
-    # Display only if smoother is checked
-    if(input$smoother){
-      smooth_curve <- lowess(x = as.numeric(df$Date), y = df$Close, f = input$f)
-      lines(smooth_curve, col = "#E6553A", lwd = 3)
+    if(input$select_crypto == "Bitcoin"){
+      color = "#434343"
+      par(mar = c(4, 4, 1, 1))
+      plot(x = Bitcoin$Date, y = Bitcoin$Close, type = "l", xlab = "Date", ylab = "Closing Price in $",
+           col = color, fg = color, col.lab = color, col.axis = color)
+      
+      # Display only if smoother is checked
+      if(input$smoother){
+        smooth_curve <- lowess(x = as.numeric(Bitcoin$Date), y = Bitcoin$Close, f = input$f)
+        lines(smooth_curve, col = "#E6553A", lwd = 3)
+      }
     }
   })
   
