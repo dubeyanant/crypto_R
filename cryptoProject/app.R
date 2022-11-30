@@ -2,7 +2,7 @@ library(shiny)
 
 ui <- fluidPage(
   navbarPage("Crypto Data",
-             tabPanel("Single",titlePanel("Cryptocurrency"),
+             tabPanel("Single",
   titlePanel("Cryptocurrency"),
   
   sidebarLayout(
