@@ -1,5 +1,5 @@
 #Bitcoin Cleaning
-bitcoin_data <- read.csv(paste(as.character(getwd()),"/Bitcoin_Data.csv", sep="")) # Reading csv file
+bitcoin_data <- read.csv(paste(as.character(getwd()),"/Bitcoin.csv", sep="")) # Reading csv file
 
 bitcoin_data # Printing data frame
 
