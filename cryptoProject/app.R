@@ -1,7 +1,9 @@
 library(shiny)
 
 ui <- fluidPage(
-  titlePanel("Cryptocurrency"),
+  navbarPage("Crypto Data",
+             tabPanel("Single",
+                      titlePanel("Cryptocurrency"),
   
   sidebarLayout(
     sidebarPanel(
@@ -19,10 +21,13 @@ ui <- fluidPage(
                        HTML("Higher values give more smoothness.")
       )
     ),
-    mainPanel(
-      # Displaying plot graph
-      plotOutput("lineplot", click = "plot_click")
-    )
+          mainPanel(
+            # Displaying plot graph
+            plotOutput("lineplot", click = "plot_click")
+          )
+        )
+             ),
+  tabPanel("Compare")
   )
 )
 
