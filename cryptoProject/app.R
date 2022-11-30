@@ -6,8 +6,8 @@ ui <- fluidPage(
   sidebarLayout(
     sidebarPanel(
       # Select date range to be plotted
-      dateRangeInput("date", strong("Date range"), start = "2013-04-28", end = "2022-11-21",
-                     min = "2013-04-28", max = "2022-11-21"),
+      dateRangeInput("date", strong("Date range"), start = tail(df$Date, n = 1), end = df$Date[1],
+                     min = tail(df$Date, n = 1), max = df$Date[1]),
       
       # Displaying x and y co-ordinates
       verbatimTextOutput("info"),
@@ -34,11 +34,14 @@ ui <- fluidPage(
 
 server <- function(input, output) {
   
-  # Create scatter plot object the plot Output function is expecting
+  
+  
+  # Create scatter-plot
   output$lineplot <- renderPlot({
     color = "#434343"
-    #par(mar = c(4, 4, 1, 1))
-    plot(x = df$Date, y = df$Close, type = "l", xlab = "Date", ylab = "Closing Price", col = color, fg = color, col.lab = color, col.axis = color)
+    par(mar = c(4, 4, 1, 1))
+    plot(x = df$Date, y = df$Close, type = "l", xlab = "Date", ylab = "Closing Price in $",
+         col = color, fg = color, col.lab = color, col.axis = color)
     
     # Display only if smoother is checked
     if(input$smoother){
@@ -47,8 +50,9 @@ server <- function(input, output) {
     }
   })
   
+  # Display x co-ordinate and price
   output$info <- renderText({
-    paste0("x=", input$plot_click$x, "\ny=", input$plot_click$y)
+    paste0("x = ", input$plot_click$x, "\nClosing Price = ", input$plot_click$y, "0$")
   })
 }
 
