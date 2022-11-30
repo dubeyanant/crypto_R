@@ -1,5 +1,5 @@
 #bitcoin_data <- read.csv("/Users/pareshmahajan/Paresh/Sem1 MIT/Data Mining/crypto_R/Bitcoin_Data.csv") # Importing .csv file
-bitcoin_data <- read_csv(paste(as.character(getwd()),"/Bitcoin_Data.csv", sep=""))
+bitcoin_data <- read.csv(paste(as.character(getwd()),"/Bitcoin_Data.csv", sep=""))
 bitcoin_data # Printing the data frame
 
 nrow(bitcoin_data) # Printing total number of rows in the data set
