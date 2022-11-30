@@ -15,3 +15,11 @@ df
 
 df[3495,] # printing last row of the data frame
 
+df$Open <- as.numeric(df$Open) # Changing string type to numeric
+df$High <- as.numeric(df$High) # Changing string type to numeric
+df$Low <- as.numeric(df$Low) # Changing string type to numeric
+df$Close <- as.numeric(df$Close) # Changing string type to numeric
+df$Volume <- as.numeric(df$Volume) # Changing string type to numeric
+df$Market.Cap <- as.numeric(df$Market.Cap) # Changing string type to numeric
+df$Date <- as.Date(df$Date, format = "%B %d %Y") # Changing date formats
+
