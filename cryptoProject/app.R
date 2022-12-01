@@ -40,10 +40,10 @@ ui <- fluidPage(
              tabPanel("Compare",
                       sidebarPanel(
                         #Dropdown menu for selecting cryptocurrency
-                        selectInput("select_crypto1", "Select First Cryptocurrency", choices = c("Bitcoin", "Ethereum", "Doge Coin")),
+                        selectInput("select_crypto1", "Select First Cryptocurrency", choices = c("Bitcoin", "Ethereum", "Doge_Coin")),
                         
                         #Dropdown menu for selecting cryptocurrency
-                        selectInput("select_crypto2", "Select Second  Cryptocurrency", choices = c("Ethereum", "Bitcoin", "Doge Coin")),
+                        selectInput("select_crypto2", "Select Second  Cryptocurrency", choices = c("Ethereum", "Bitcoin", "Doge_Coin")),
                         
                         # Select whether to overlay smooth trend line
                         checkboxInput(inputId = "smoother1", label = strong("Overlay smooth trend line"), value = FALSE),
@@ -98,7 +98,7 @@ server <- function(input, output) {
       selectedInput <- Ethereum
     }
     else if(input$select_crypto == "Doge_Coin"){
-      input$select_crypto == Doge_Coin
+      selectedInput <- Doge_Coin
     }
     color = "#434343"
     par(mar = c(4, 4, 1, 1))
@@ -127,7 +127,7 @@ server <- function(input, output) {
       selectedInput <- Ethereum
     }
     else if(input$select_crypto == "Doge_Coin"){
-      input$select_crypto == Doge_Coin
+      selectedInput <- Doge_Coin
     }
     color = "#434343"
     par(mar = c(4, 4, 1, 1))
@@ -158,7 +158,7 @@ server <- function(input, output) {
       selectedInput1 <- Ethereum
     }
     else if(input$select_crypto1 == "Doge_Coin"){
-      selectedInput1 == Doge_Coin
+      selectedInput1 <- Doge_Coin
     }
     if(input$select_crypto2 == "Bitcoin"){
       selectedInput2 <- Bitcoin
@@ -167,7 +167,7 @@ server <- function(input, output) {
       selectedInput2 <- Ethereum
     }
     else if(input$select_crypto2 == "Doge_Coin"){
-      selectedInput2 == Doge_Coin
+      selectedInput2 <- Doge_Coin
     }
     color = "#434343"
     par(mar = c(4, 4, 1, 1))
@@ -193,7 +193,7 @@ server <- function(input, output) {
       selectedInput1 <- Ethereum
     }
     else if(input$select_crypto1 == "Doge_Coin"){
-      selectedInput1 == Doge_Coin
+      selectedInput1 <- Doge_Coin
     }
     if(input$select_crypto2 == "Bitcoin"){
       selectedInput2 <- Bitcoin
@@ -202,7 +202,7 @@ server <- function(input, output) {
       selectedInput2 <- Ethereum
     }
     else if(input$select_crypto2 == "Doge_Coin"){
-      selectedInput2 == Doge_Coin
+      selectedInput2 <- Doge_Coin
     }
     color = "#434343"
     par(mar = c(4, 4, 1, 1))

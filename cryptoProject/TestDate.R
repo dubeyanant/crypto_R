@@ -1,84 +1,77 @@
-# Load packages
+#Libraries
 library(shiny)
-library(shinythemes)
+library(shinyWidgets)
+library(ggplot2)
 library(dplyr)
-library(readr)
+# library(readxl)
+library(scales)
+library(ggthemes)
+library(plotly)
+library(shinythemes)
 
-# Load data
-trend_data <- read_csv("trend_data.csv")
-trend_description <- read_csv("trend_description.csv")
-
-# Define UI
-ui <- fluidPage(theme = shinytheme("lumen"),
-                titlePanel("Google Trend Index"),
-                sidebarLayout(
-                  sidebarPanel(
-                    
-                    # Select type of trend to plot
-                    selectInput(inputId = "type", label = strong("Trend index"),
-                                choices = unique(trend_data$type),
-                                selected = "Travel"),
-                    
-                    # Select date range to be plotted
-                    dateRangeInput("date", strong("Date range"), start = "2007-01-01", end = "2017-07-31",
-                                   min = "2007-01-01", max = "2017-07-31"),
-                    
-                    # Select whether to overlay smooth trend line
-                    checkboxInput(inputId = "smoother", label = strong("Overlay smooth trend line"), value = FALSE),
-                    
-                    # Display only if the smoother is checked
-                    conditionalPanel(condition = "input.smoother == true",
-                                     sliderInput(inputId = "f", label = "Smoother span:",
-                                                 min = 0.01, max = 1, value = 0.67, step = 0.01,
-                                                 animate = animationOptions(interval = 100)),
-                                     HTML("Higher values give more smoothness.")
-                    )
-                  ),
-                  
-                  # Output: Description, lineplot, and reference
-                  mainPanel(
-                    plotOutput(outputId = "lineplot", height = "300px"),
-                    textOutput(outputId = "desc"),
-                    tags$a(href = "https://www.google.com/finance/domestic_trends", "Source: Google Domestic Trends", target = "_blank")
-                  )
-                )
+#Load Data
+# myData <- read_excel("C:/Users/Kanew/OneDrive/Desktop/RApp/Unemployment2.xlsx")
+myData <- data.frame(
+  stringsAsFactors = FALSE,
+  Date = c("2010-01-01","2010-02-01",
+           "2010-03-01","2010-04-01","2010-05-01","2010-06-01",
+           "2010-07-01","2010-08-01","2010-09-01","2010-10-01",
+           "2010-11-01","2010-12-01","2011-01-01","2011-02-01",
+           "2011-03-01","2011-04-01","2011-05-01","2011-06-01",
+           "2011-07-01","2011-08-01"),
+  Category = c("National","National",
+               "National","National","TestCategory","National","National",
+               "National","National","National","National","National",
+               "National","National","TestCategory","National","National",
+               "National","TestCategory","National"),
+  Rate = c(9.8,9.8,9.9,9.9,9.6,9.4,
+           9.4,9.5,9.5,9.4,9.8,9.3,9.1,9,9,9.1,9,9.1,9,9)
 )
 
-# Define server function
+
+ui <- fluidPage(theme = shinytheme("cerulean"),
+                tabsetPanel(
+                  
+                  tabPanel(
+                    "Data Visualization",
+                    sidebarLayout(
+                      sidebarPanel(
+                        sliderInput(
+                          inputId = "Date",
+                          label = "Dates:",
+                          min = min(Bitcoin$Date),
+                          max = max(Bitcoin$Date),
+                          value = min(Bitcoin$Date),
+                          timeFormat = "%Y-%m-%d",
+                          step = 1,
+                          animate = animationOptions(interval = 300)
+                        )
+                      ),
+                      mainPanel(
+                        h1("National Unemployment Rate by Racial/Ethnic Category"),
+                        plotlyOutput("plot"), # , height = 'auto', width = 'auto'
+                        
+                      )
+                    )
+                  )
+                ))
+
 server <- function(input, output) {
+  output$plot <- renderPlotly({
   
-  # Subset data
-  selected_trends <- reactive({
-    req(input$date)
-    validate(need(!is.na(input$date[1]) & !is.na(input$date[2]), "Error: Please provide both a start and an end date."))
-    validate(need(input$date[1] < input$date[2], "Error: Start date should be earlier than end date."))
-    trend_data %>%
-      filter(
-        type == input$type,
-        date > as.POSIXct(input$date[1]) & date < as.POSIXct(input$date[2]
-        ))
+    
+    filteredData <- Bitcoin
+    req(nrow(filteredData) > 0)
+    
+    myGGPlot <- ggplot(filteredData, mapping = aes(x = Date, y = close)) 
+      
+    
+    ggplotly(myGGPlot)
   })
   
-  
-  # Create scatterplot object the plotOutput function is expecting
-  output$lineplot <- renderPlot({
-    color = "#434343"
-    par(mar = c(4, 4, 1, 1))
-    plot(x = selected_trends()$date, y = selected_trends()$close, type = "l",
-         xlab = "Date", ylab = "Trend index", col = color, fg = color, col.lab = color, col.axis = color)
-    # Display only if smoother is checked
-    if(input$smoother){
-      smooth_curve <- lowess(x = as.numeric(selected_trends()$date), y = selected_trends()$close, f = input$f)
-      lines(smooth_curve, col = "#E6553A", lwd = 3)
-    }
-  })
-  
-  # Pull in description of trend
-  output$desc <- renderText({
-    trend_text <- filter(trend_description, type == input$type) %>% pull(text)
-    paste(trend_text, "The index is set to 1.0 on January 1, 2004 and is calculated only for US search traffic.")
+  output$myDataTable <- DT::renderDataTable({
+    DT::datatable(data)
   })
 }
 
-# Create Shiny object
 shinyApp(ui = ui, server = server)
