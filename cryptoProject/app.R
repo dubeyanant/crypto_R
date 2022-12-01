@@ -8,22 +8,49 @@ source("ARIMA.R")
 
 # UI
 {
-ui <- fluidPage(
-  navbarPage("Cryptocurrency Data",
-             tabPanel("Single",
-                      sidebarLayout(
+  ui <- fluidPage(
+    navbarPage("Cryptocurrency Data",
+               tabPanel("Single",
+                        sidebarLayout(
+                          sidebarPanel(
+                            #Dropdown menu for selecting cryptocurrency
+                            selectInput("select_crypto", "Select Cryptocurrency", choices = c("Bitcoin", "Ethereum", "Doge_Coin")),
+                            # Displaying x and y co-ordinates
+                            verbatimTextOutput("info"),
+                            
+                            # Select whether to overlay smooth trend line
+                            checkboxInput(inputId = "smoother", label = strong("Overlay smooth trend line"), value = FALSE),
+                            
+                            # Display only if the smoother is checked
+                            conditionalPanel(condition = "input.smoother == true",
+                                             sliderInput(inputId = "f", label = "Smoother span:",
+                                                         min = 0.01, max = 1, value = 0.67, step = 0.01,
+                                                         animate = animationOptions(interval = 100)),
+                                             HTML("Higher values give more smoothness.")
+                            )
+                          ),
+                          mainPanel(
+                            # Displaying plot graph
+                            plotOutput("lineplot", click = "plot_click"),
+                            plotOutput("lineplot2", click = "plot_click")
+                          )
+                        )
+               ),
+               
+               tabPanel("Compare",
                         sidebarPanel(
                           #Dropdown menu for selecting cryptocurrency
-                          selectInput("select_crypto", "Select Cryptocurrency", choices = c("Bitcoin", "Ethereum", "Doge_Coin")),
-                          # Displaying x and y co-ordinates
-                          verbatimTextOutput("info"),
+                          selectInput("select_crypto1", "Select First Cryptocurrency", choices = c("Bitcoin", "Ethereum", "Doge_Coin")),
+                          
+                          #Dropdown menu for selecting cryptocurrency
+                          selectInput("select_crypto2", "Select Second  Cryptocurrency", choices = c("Ethereum", "Bitcoin", "Doge_Coin")),
                           
                           # Select whether to overlay smooth trend line
-                          checkboxInput(inputId = "smoother", label = strong("Overlay smooth trend line"), value = FALSE),
+                          checkboxInput(inputId = "smoother1", label = strong("Overlay smooth trend line"), value = FALSE),
                           
                           # Display only if the smoother is checked
-                          conditionalPanel(condition = "input.smoother == true",
-                                           sliderInput(inputId = "f", label = "Smoother span:",
+                          conditionalPanel(condition = "input.smoother1 == true",
+                                           sliderInput(inputId = "f1", label = "Smoother span:",
                                                        min = 0.01, max = 1, value = 0.67, step = 0.01,
                                                        animate = animationOptions(interval = 100)),
                                            HTML("Higher values give more smoothness.")
@@ -31,57 +58,32 @@ ui <- fluidPage(
                         ),
                         mainPanel(
                           # Displaying plot graph
-                          plotOutput("lineplot", click = "plot_click"),
-                          plotOutput("lineplot2", click = "plot_click")
-                        )
-                      )
-             ),
-             
-             tabPanel("Compare",
-                      sidebarPanel(
-                        #Dropdown menu for selecting cryptocurrency
-                        selectInput("select_crypto1", "Select First Cryptocurrency", choices = c("Bitcoin", "Ethereum", "Doge_Coin")),
-                        
-                        #Dropdown menu for selecting cryptocurrency
-                        selectInput("select_crypto2", "Select Second  Cryptocurrency", choices = c("Ethereum", "Bitcoin", "Doge_Coin")),
-                        
-                        # Select whether to overlay smooth trend line
-                        checkboxInput(inputId = "smoother1", label = strong("Overlay smooth trend line"), value = FALSE),
-                        
-                        # Display only if the smoother is checked
-                        conditionalPanel(condition = "input.smoother1 == true",
-                                         sliderInput(inputId = "f1", label = "Smoother span:",
-                                                     min = 0.01, max = 1, value = 0.67, step = 0.01,
-                                                     animate = animationOptions(interval = 100)),
-                                         HTML("Higher values give more smoothness.")
-                        )
-                      ),
-                      mainPanel(
-                        # Displaying plot graph
-                        plotOutput("lineplot3", click = "plot_click"),
-                        plotOutput("lineplot4", click = "plot_click")
-                        
-                      )
-             ),
-             
-             tabPanel("Prediction",
-                      sidebarLayout(
-                        sidebarPanel(
+                          plotOutput("lineplot3", click = "plot_click"),
+                          plotOutput("lineplot4", click = "plot_click")
                           
-                          
-                          # Slider panel
-                          sliderInput(inputId = "h", label = "Quarters to predict",
-                                      min = 1, max = 6, value = 6, step = 1)
-                        ),
-                        
-                        # Show a plot of the generated distribution
-                        mainPanel(
-                          plotOutput("trendPlot")
                         )
-                      )
-             )
+               ),
+               
+               tabPanel("Prediction",
+                        sidebarLayout(
+                          
+                          sidebarPanel(
+                            # Title
+                            "Bitcoin Closing Price Prediction",
+                            
+                            # Slider panel
+                            sliderInput(inputId = "h", label = "Quarters to predict",
+                                        min = 1, max = 6, value = 6, step = 1)
+                          ),
+                          
+                          # Show a plot of the generated distribution
+                          mainPanel(
+                            plotOutput("trendPlot")
+                          )
+                        )
+               )
+    )
   )
-)
 }
 
 # Server
@@ -114,7 +116,7 @@ server <- function(input, output) {
   
   # Display x co-ordinate and price
   output$info <- renderText({
-    paste0("x = ", input$plot_click$x, "\nClosing Price = ", input$plot_click$y, "0$")
+    paste0("Closing Price = ", input$plot_click$y, "0$")
   })
   
   # Create scatter-plot of Market Cap vs Time Graph
@@ -143,7 +145,7 @@ server <- function(input, output) {
   
   # Display x co-ordinate and price
   output$info <- renderText({
-    paste0("x = ", input$plot_click$x, "\nClosing Price = ", input$plot_click$y, "0$")
+    paste0("Closing Price = ", input$plot_click$y, "0$")
   })
   
   
