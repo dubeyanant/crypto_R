@@ -18,3 +18,9 @@ Ethereum[,-1] <- data.frame(lapply(Ethereum[,-1], as.numeric))
 Ethereum$MarketCap <- Ethereum$Market.Cap/1000000000
 
 #Dogecoin Cleaning
+Doge_Coin <- read.csv(paste(as.character(getwd()),"/DogeCoin.csv", sep=""))
+Doge_Coin <- data.frame(lapply(Doge_Coin, gsub, pattern='[\\$,]', replacement=''))
+Doge_Coin <- data.frame(lapply(Doge_Coin, function(x)str_trim(x)))
+Doge_Coin$Date <- as.Date(Doge_Coin$Date, format = "%B %d %Y")
+Doge_Coin[,-1] <- data.frame(lapply(Doge_Coin[,-1], as.numeric))
+Doge_Coin$MarketCap <- Doge_Coin$Market.Cap/1000000000
