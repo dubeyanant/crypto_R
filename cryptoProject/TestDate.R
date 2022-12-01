@@ -1,9 +1,3 @@
-# Install packages
-#install.packages("shiny")
-#install.packages("shinythemes")
-#install.packages("dplyr")
-#install.packages("readr")
-
 # Load packages
 library(shiny)
 library(shinythemes)
@@ -11,8 +5,8 @@ library(dplyr)
 library(readr)
 
 # Load data
-trend_data <- read_csv("data/trend_data.csv")
-trend_description <- read_csv("data/trend_description.csv")
+trend_data <- read_csv("trend_data.csv")
+trend_description <- read_csv("trend_description.csv")
 
 # Define UI
 ui <- fluidPage(theme = shinytheme("lumen"),
