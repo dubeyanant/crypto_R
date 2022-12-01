@@ -1,10 +1,13 @@
 #install.packages("fpp2")
+#install.packages("shiny")
 library(shiny)
 
 # Loading Source files
 source("data_cleaning.R")
 source("ARIMA.R")
 
+# UI
+{
 ui <- fluidPage(
   navbarPage("Cryptocurrency Data",
              tabPanel("Single",
@@ -36,11 +39,11 @@ ui <- fluidPage(
              
              tabPanel("Compare",
                       sidebarPanel(
-                        width = 3,
                         #Dropdown menu for selecting cryptocurrency
                         selectInput("select_crypto1", "Select First Cryptocurrency", choices = c("Bitcoin", "Ethereum", "Doge Coin")),
-                        # Displaying x and y co-ordinates
-                        verbatimTextOutput("info1"),
+                        
+                        #Dropdown menu for selecting cryptocurrency
+                        selectInput("select_crypto2", "Select Second  Cryptocurrency", choices = c("Ethereum", "Bitcoin", "Doge Coin")),
                         
                         # Select whether to overlay smooth trend line
                         checkboxInput(inputId = "smoother1", label = strong("Overlay smooth trend line"), value = FALSE),
@@ -54,16 +57,10 @@ ui <- fluidPage(
                         )
                       ),
                       mainPanel(
-                        width = 6,
                         # Displaying plot graph
                         plotOutput("lineplot3", click = "plot_click"),
                         plotOutput("lineplot4", click = "plot_click")
                         
-                      ),
-                      sidebarPanel(
-                        width = 3,
-                        #Dropdown menu for selecting cryptocurrency
-                        selectInput("select_crypto2", "Select Second  Cryptocurrency", choices = c("Bitcoin", "Ethereum", "Doge Coin")),
                       )
              ),
              
@@ -85,10 +82,12 @@ ui <- fluidPage(
              )
   )
 )
+}
 
-
+# Server
 server <- function(input, output) {
   
+  # Single module
   # Create scatter-plot
   output$lineplot <- renderPlot({
     
@@ -132,12 +131,12 @@ server <- function(input, output) {
     }
     color = "#434343"
     par(mar = c(4, 4, 1, 1))
-    plot(x = selectedInput$Date, y = selectedInput$Market.Cap, type = "l", xlab = "Date", ylab = "Market Capitalization in $", main="Market Cap Vs Time Graph",
+    plot(x = selectedInput$Date, y = selectedInput$MarketCap, type = "l", xlab = "Date", ylab = "Market Capitalization in Billion $", main="Market Cap Vs Time Graph",
          col = "blue", col.lab = color, col.axis = color)
     
     # Display only if smoother is checked
     if(input$smoother){
-      smooth_curve <- lowess(x = as.numeric(selectedInput$Date), y = selectedInput$Market.Cap, f = input$f)
+      smooth_curve <- lowess(x = as.numeric(selectedInput$Date), y = selectedInput$MarketCap, f = input$f)
       lines(smooth_curve, col = "#E6553A", lwd = 3)
     }
   })
@@ -148,7 +147,7 @@ server <- function(input, output) {
   })
   
   
-  # Compare Logic
+  # Compare module
   # Create scatter-plot of Price vs Time Graph
   output$lineplot3 <- renderPlot({
     
@@ -184,11 +183,6 @@ server <- function(input, output) {
     }
   })
   
-  # Display x co-ordinate and price
-  output$info1 <- renderText({
-    paste0("x = ", input$plot_click$x, "\nClosing Price = ", input$plot_click$y, "0$")
-  })
-  
   # Create scatter-plot of Market Cap vs Time Graph
   output$lineplot4 <- renderPlot({
     
@@ -212,30 +206,27 @@ server <- function(input, output) {
     }
     color = "#434343"
     par(mar = c(4, 4, 1, 1))
-    plot(x = selectedInput1$Date, y = selectedInput1$Market.Cap, type = "l", main="Market Cap vs Time Chart", xlab = "Date", ylab = "Market Capitalization in $",
+    plot(x = selectedInput1$Date, y = selectedInput1$MarketCap, type = "l", main="Market Cap vs Time Chart", xlab = "Date", ylab = "Market Capitalization in Billion $",
          fg = color, col.lab = color, col.axis = color, col="green")
-    lines(selectedInput2$Date,selectedInput2$Market.Cap,lty=4,lwd=4,col="blue")
+    lines(selectedInput2$Date,selectedInput2$MarketCap,lty=4,lwd=4,col="blue")
     # Display only if smoother is checked
     if(input$smoother1){
-      smooth_curve1 <- lowess(x = as.numeric(selectedInput1$Date), y = selectedInput1$Market.Cap, f = input$f1)
+      smooth_curve1 <- lowess(x = as.numeric(selectedInput1$Date), y = selectedInput1$MarketCap, f = input$f1)
       lines(smooth_curve1, lwd = 3,col="red")
-      smooth_curve2 <- lowess(x = as.numeric(selectedInput2$Date), y = selectedInput2$Market.Cap, f = input$f1)
+      smooth_curve2 <- lowess(x = as.numeric(selectedInput2$Date), y = selectedInput2$MarketCap, f = input$f1)
       lines(smooth_curve2, lwd = 3,col="red")
     }
   })
   
-  # Display x co-ordinate and price
-  output$info1 <- renderText({
-    paste0("x = ", input$plot_click$x, "\nClosing Price = ", input$plot_click$y, "0$")
-  })
-  
+  # Prediction module
   # Display prediction
   output$trendPlot <- renderPlot({
     
     mybtcforecast <- forecast(btcmodel, level = c(95), h = input$h)
-    autoplot(mybtcforecast, title = 'Anant', xlab = 'Years(Quarters)', ylab = 'Closing Price in $')
+    autoplot(mybtcforecast, xlab = 'Years(Quarters)', ylab = 'Closing Price in $')
   })
   
 }
 
+# Launching app
 shinyApp(ui, server)
