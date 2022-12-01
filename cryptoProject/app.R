@@ -1,6 +1,9 @@
 #install.packages("fpp2")
-
 library(shiny)
+
+# Loading Source files
+source("data_cleaning.R")
+source("ARIMA.R")
 
 ui <- fluidPage(
   navbarPage("Cryptocurrency Data",
@@ -68,14 +71,10 @@ ui <- fluidPage(
                       sidebarLayout(
                         sidebarPanel(
                           
-                          # days for prediction ahead
-                          numericInput("h", "Days to predict", value = 10),
                           
-                          # add options for prediction method
-                          radioButtons("model", "Model to select",
-                                       choices = c("ARIMA", "NeuralNet"),
-                                       choiceValues = "ARIMA")
-                          
+                          # Slider panel
+                          sliderInput(inputId = "h", label = "Quarters to predict",
+                                      min = 1, max = 6, value = 6, step = 1)
                         ),
                         
                         # Show a plot of the generated distribution
@@ -232,20 +231,9 @@ server <- function(input, output) {
   
   # Display prediction
   output$trendPlot <- renderPlot({
-    library(fpp2)
     
-    stock <- Bitcoin
-    
-    end = dim(stock)[1]
-    start = end - 100
-    
-    if (input$model == "ARIMA"){
-      mod <- auto.arima(stock[start : end, "Close"])
-    } else {
-      mod <- nnetar(stock[start : end, "Close"])
-    }
-    data <- forecast(mod, h = input$h)
-    autoplot(forecast(mod, h = input$h))
+    mybtcforecast <- forecast(btcmodel, level = c(95), h = input$h)
+    autoplot(mybtcforecast, title = 'Anant', xlab = 'Years(Quarters)', ylab = 'Closing Price in $')
   })
   
 }
