@@ -40,12 +40,7 @@ ui <- fluidPage(
              tabPanel("Prediction",
                       sidebarLayout(
                         sidebarPanel(
-                          # select time range to display 
-                          sliderInput("n", "Number of Days",
-                                      value = c(153, 253),
-                                      min = 1,
-                                      max = 253
-                          ),
+                          
                           # days for prediction ahead
                           numericInput("h", "Days to predict", value = 10),
                           
@@ -113,7 +108,7 @@ server <- function(input, output) {
       mod <- nnetar(stock[start : end, "Close"])
     }
     data <- forecast(mod, h = input$h)
-    autoplot(forecast(mod, h = input$h)) + ggtitle("Forecast for next 10 Days based on past 100 Days Price")
+    autoplot(forecast(mod, h = input$h))
   })
 }
 
